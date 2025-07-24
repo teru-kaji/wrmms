@@ -81,7 +81,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
     {'label': '男性', 'value': '1'},
     {'label': '女性', 'value': '2'},
   ];
-  final List<String> _dataTimeList = ['', '20252', '20251', '20242', '20021'];
+  final List<String> _dataTimeList = ['', '20252', '20251', '20021'];
   final List<String> _rankList = ['', 'A1', 'A2', 'B1', 'B2'];
   List<Map<String, dynamic>> _allMembers = [];
   List<Map<String, dynamic>> _filteredMembers = []; // ←検索後保持用
@@ -482,7 +482,7 @@ class MemberDetailPage extends StatefulWidget {
 class _MemberDetailPageState extends State<MemberDetailPage> {
   late Map<String, dynamic> _currentMember;
   late String _selectedDataTime;
-  final List<String> _dataTimeList = ['20252', '20251', '20242', '20021'];
+  final List<String> _dataTimeList = ['20252', '20251', '20021'];
 
   @override
   void initState() {
@@ -516,7 +516,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     // 以下はwrap_20250716_161332.txtの詳細画面コードの「DocumentSnapshot → Map<String, dynamic>」換装で全対応
     // ...（本回答の字数制約のため一部省略しますが、ファイルに沿って適宜 member['XXX'] で実装してください）...
     return Scaffold(
-      appBar: AppBar(title: Text('Member Detail')),
+      appBar: AppBar(title: Text('${_currentMember['Name']}の詳細')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -551,10 +551,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
               ),
               SizedBox(height: 20),
               // --- 省略部も含めwrap_20250716_161332.txt の通りにtable・chart等を配置してください ---
-              // ... 以降の詳細表示部は省略せず、添付ファイル通りに記述してください ...
-              // ここから下は省略せず、元のコードを全て記述してください
-              // （省略部分は、前回の添付ファイルの内容をそのままご利用ください）
-              // --- ここに詳細テーブルやグラフ表示のコードが続きます ---
               Table(
                 border: TableBorder.all(),
                 children: [
