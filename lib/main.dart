@@ -1942,11 +1942,11 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center, // ここを追加
                 children: [
-                  _LegendItem(color: Colors.indigo, label: '1着'),
+                  _LegendItem(color: Colors.indigo.shade100, label: '1着'),
                   SizedBox(width: 16),
-                  _LegendItem(color: Colors.blue, label: '2着'),
+                  _LegendItem(color: Colors.indigo.shade400, label: '2着'),
                   SizedBox(width: 16),
-                  _LegendItem(color: Colors.lightBlueAccent, label: '3着'),
+                  _LegendItem(color: Colors.indigo.shade800, label: '3着'),
                 ],
               ),
               Container(
@@ -1997,7 +1997,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                 BarChartRodStackItem(
                                   0,
                                   double.parse(_currentMember['1stPlace#$i']),
-                                  Colors.indigo, // 1着
+                                  Colors.indigo.shade100, // 1着
                                 ),
                                 BarChartRodStackItem(
                                   double.parse(_currentMember['1stPlace#$i']),
@@ -2005,7 +2005,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       double.parse(
                                         _currentMember['2ndPlace#$i'],
                                       ),
-                                  Colors.lightBlue, // 2着
+                                  Colors.indigo.shade400, // 2着
                                 ),
                                 BarChartRodStackItem(
                                   double.parse(_currentMember['1stPlace#$i']) +
@@ -2019,7 +2019,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       double.parse(
                                         _currentMember['3rdPlace#$i'],
                                       ),
-                                  Colors.lightBlueAccent, // 3着
+                                  Colors.indigo.shade800, // 3着
                                 ),
                               ],
                             ),
