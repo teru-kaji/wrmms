@@ -1942,7 +1942,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center, // ここを追加
                 children: [
-                  _LegendItem(color: Colors.indigo.shade100, label: '1着'),
+                  _LegendItem(color: Colors.indigo.shade200, label: '1着'),
                   SizedBox(width: 16),
                   _LegendItem(color: Colors.indigo.shade400, label: '2着'),
                   SizedBox(width: 16),
@@ -1997,7 +1997,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                 BarChartRodStackItem(
                                   0,
                                   double.parse(_currentMember['1stPlace#$i']),
-                                  Colors.indigo.shade100, // 1着
+                                  Colors.indigo.shade200, // 1着
                                 ),
                                 BarChartRodStackItem(
                                   double.parse(_currentMember['1stPlace#$i']),
