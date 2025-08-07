@@ -85,7 +85,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
   final List<String> _rankList = ['', 'A1', 'A2', 'B1', 'B2'];
   List<Map<String, dynamic>> _allMembers = [];
   List<Map<String, dynamic>> _filteredMembers = []; // ←検索後保持用
-  List<Map<String, dynamic>> _members = [];         // ←表示リスト
+  List<Map<String, dynamic>> _members = []; // ←表示リスト
 
   // ページネーション用
   final ScrollController _scrollController = ScrollController();
@@ -111,7 +111,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 100 &&
+            _scrollController.position.maxScrollExtent - 100 &&
         !_isLoadingMore &&
         _hasMore &&
         _searched) {
@@ -137,32 +137,37 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
       return;
     }
 
-    final filtered = _allMembers.where((member) {
-      if (_nameController.text.isNotEmpty &&
-          !(member['Kana3']?.toString() ?? '').contains(_nameController.text)) {
-        return false;
-      }
-      if (_codeController.text.isNotEmpty &&
-          !(member['Number']?.toString() ?? '').startsWith(_codeController.text)) {
-        return false;
-      }
-      if (_selectedGender != null &&
-          _selectedGender!.isNotEmpty &&
-          (member['Sex']?.toString() ?? '') != _selectedGender) {
-        return false;
-      }
-      if (_selectedDataTime != null &&
-          _selectedDataTime!.isNotEmpty &&
-          (member['DataTime']?.toString() ?? '') != _selectedDataTime) {
-        return false;
-      }
-      if (_selectedRank != null &&
-          _selectedRank!.isNotEmpty &&
-          (member['Rank']?.toString() ?? '') != _selectedRank) {
-        return false;
-      }
-      return true;
-    }).toList();
+    final filtered =
+        _allMembers.where((member) {
+          if (_nameController.text.isNotEmpty &&
+              !(member['Kana3']?.toString() ?? '').contains(
+                _nameController.text,
+              )) {
+            return false;
+          }
+          if (_codeController.text.isNotEmpty &&
+              !(member['Number']?.toString() ?? '').startsWith(
+                _codeController.text,
+              )) {
+            return false;
+          }
+          if (_selectedGender != null &&
+              _selectedGender!.isNotEmpty &&
+              (member['Sex']?.toString() ?? '') != _selectedGender) {
+            return false;
+          }
+          if (_selectedDataTime != null &&
+              _selectedDataTime!.isNotEmpty &&
+              (member['DataTime']?.toString() ?? '') != _selectedDataTime) {
+            return false;
+          }
+          if (_selectedRank != null &&
+              _selectedRank!.isNotEmpty &&
+              (member['Rank']?.toString() ?? '') != _selectedRank) {
+            return false;
+          }
+          return true;
+        }).toList();
 
     setState(() {
       _searched = true;
@@ -180,9 +185,10 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
     setState(() => _isLoadingMore = true);
 
     int start = _loadedCount;
-    int end = (_loadedCount + _pageSize < _filteredMembers.length)
-        ? _loadedCount + _pageSize
-        : _filteredMembers.length;
+    int end =
+        (_loadedCount + _pageSize < _filteredMembers.length)
+            ? _loadedCount + _pageSize
+            : _filteredMembers.length;
     final nextMembers = _filteredMembers.sublist(start, end);
 
     setState(() {
@@ -210,35 +216,15 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   : Icons.light_mode,
             ),
             tooltip:
-            widget.themeMode == ThemeMode.dark ? 'ライトモードに切替' : 'ダークモードに切替',
+                widget.themeMode == ThemeMode.dark ? 'ライトモードに切替' : 'ダークモードに切替',
             onPressed: widget.onToggleTheme,
           ),
         ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _codeController,
-                    decoration: InputDecoration(labelText: '登録番号'),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(labelText: '氏名（ひらがな）'),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+
           Row(
             children: [
               Expanded(
@@ -248,7 +234,17 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(
                       labelText: '期',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16), // ← 角丸
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 6,
@@ -257,12 +253,12 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                     ),
                     value: _selectedDataTime,
                     items:
-                    _dataTimeList.map((dt) {
-                      return DropdownMenuItem(
-                        value: dt,
-                        child: Text(dt.isEmpty ? '' : formatDataTime(dt)),
-                      );
-                    }).toList(),
+                        _dataTimeList.map((dt) {
+                          return DropdownMenuItem(
+                            value: dt,
+                            child: Text(dt.isEmpty ? '' : formatDataTime(dt)),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedDataTime = value;
@@ -278,7 +274,17 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(
                       labelText: '級別',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16), // ← 角丸
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 6,
@@ -287,12 +293,12 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                     ),
                     value: _selectedRank,
                     items:
-                    _rankList.map((rank) {
-                      return DropdownMenuItem(
-                        value: rank,
-                        child: Text(rank),
-                      );
-                    }).toList(),
+                        _rankList.map((rank) {
+                          return DropdownMenuItem(
+                            value: rank,
+                            child: Text(rank),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedRank = value;
@@ -308,7 +314,17 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(
                       labelText: '性別',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16), // ← 角丸
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 6,
@@ -317,12 +333,12 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                     ),
                     value: _selectedGender,
                     items:
-                    _genderList.map((gender) {
-                      return DropdownMenuItem(
-                        value: gender['value'],
-                        child: Text(gender['label']!),
-                      );
-                    }).toList(),
+                        _genderList.map((gender) {
+                          return DropdownMenuItem(
+                            value: gender['value'],
+                            child: Text(gender['label']!),
+                          );
+                        }).toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedGender = value;
@@ -331,6 +347,55 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   ),
                 ),
               ),
+            ],
+          ),
+
+          Row(
+            children: [
+              SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: _codeController,
+                  decoration: InputDecoration(
+                    labelText: '登録番号',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16), // ← 角を丸く
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 16),
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: '氏名（ひらがな）',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16), // ← 角を丸く
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
             ],
           ),
           Padding(
@@ -380,9 +445,9 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                         MaterialPageRoute(
                           builder:
                               (context) => MemberDetailPage(
-                            member: member,
-                            allMembers: _allMembers,
-                          ),
+                                member: member,
+                                allMembers: _allMembers,
+                              ),
                         ),
                       );
                     },
@@ -416,9 +481,9 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                                   member['Rank'] ?? 'No Data',
                                   style: TextStyle(
                                     fontWeight:
-                                    (member['Rank'] == 'A1')
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                                        (member['Rank'] == 'A1')
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
                                   ),
                                 ),
                               ),
@@ -494,8 +559,8 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
   void _switchDataTime(String newDataTime) {
     if (newDataTime == _selectedDataTime) return;
     final candidate = widget.allMembers.firstWhere(
-          (m) =>
-      m['Number'] == _currentMember['Number'] &&
+      (m) =>
+          m['Number'] == _currentMember['Number'] &&
           m['DataTime'] == newDataTime,
       orElse: () => {},
     );
@@ -528,12 +593,12 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                   DropdownButton<String>(
                     value: _selectedDataTime,
                     items:
-                    _dataTimeList.map((dt) {
-                      return DropdownMenuItem(
-                        value: dt,
-                        child: Text(formatDataTime(dt)),
-                      );
-                    }).toList(),
+                        _dataTimeList.map((dt) {
+                          return DropdownMenuItem(
+                            value: dt,
+                            child: Text(formatDataTime(dt)),
+                          );
+                        }).toList(),
                     onChanged: (newValue) {
                       if (newValue != null) {
                         _switchDataTime(newValue);
@@ -766,16 +831,16 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     double.tryParse(value ?? '') ?? 0;
                                 final total =
                                     safeParse(_currentMember['FalseStart#1']) +
-                                        safeParse(_currentMember['FalseStart#2']) +
-                                        safeParse(_currentMember['FalseStart#3']) +
-                                        safeParse(_currentMember['FalseStart#4']) +
-                                        safeParse(_currentMember['FalseStart#5']) +
-                                        safeParse(_currentMember['FalseStart#6']);
+                                    safeParse(_currentMember['FalseStart#2']) +
+                                    safeParse(_currentMember['FalseStart#3']) +
+                                    safeParse(_currentMember['FalseStart#4']) +
+                                    safeParse(_currentMember['FalseStart#5']) +
+                                    safeParse(_currentMember['FalseStart#6']);
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'フライング失格回数',
@@ -796,7 +861,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -829,11 +894,11 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       ),
                                       Text(
                                         'フライングをした選手は、そのレースから除外され、該当艇に関する舟券はすべて返還となります。\n'
-                                            'フフライング回数が多くなると、以下のような罰則があります。\n'
-                                            ' 1回：30日間の斡旋停止（レース出場停止）\n'
-                                            ' 2回：60日間の斡旋停止\n'
-                                            ' 3回：90日間の斡旋停止\n'
-                                            ' 4回：180日間の斡旋停止や引退勧告\n',
+                                        'フフライング回数が多くなると、以下のような罰則があります。\n'
+                                        ' 1回：30日間の斡旋停止（レース出場停止）\n'
+                                        ' 2回：60日間の斡旋停止\n'
+                                        ' 3回：90日間の斡旋停止\n'
+                                        ' 4回：180日間の斡旋停止や引退勧告\n',
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         ),
@@ -857,11 +922,11 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   double.tryParse(value ?? '') ?? 0;
                               final total =
                                   safeParse(_currentMember['FalseStart#1']) +
-                                      safeParse(_currentMember['FalseStart#2']) +
-                                      safeParse(_currentMember['FalseStart#3']) +
-                                      safeParse(_currentMember['FalseStart#4']) +
-                                      safeParse(_currentMember['FalseStart#5']) +
-                                      safeParse(_currentMember['FalseStart#6']);
+                                  safeParse(_currentMember['FalseStart#2']) +
+                                  safeParse(_currentMember['FalseStart#3']) +
+                                  safeParse(_currentMember['FalseStart#4']) +
+                                  safeParse(_currentMember['FalseStart#5']) +
+                                  safeParse(_currentMember['FalseStart#6']);
                               if (total == 0) {
                                 return '';
                               } else {
@@ -885,26 +950,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['LateStartNoResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['LateStartNoResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartNoResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartNoResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartNoResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartNoResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['LateStartNoResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartNoResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartNoResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartNoResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartNoResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任外の出遅れ回数',
@@ -915,7 +980,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         'スタートタイミングから1秒以上遅れてスタートラインを通過した場合に適用されます。\n'
-                                            'L0は「選手責任外の出遅れ」を示し、例えばエンジントラブルなど選手自身の過失ではない理由で出遅れた場合に使われます',
+                                        'L0は「選手責任外の出遅れ」を示し、例えばエンジントラブルなど選手自身の過失ではない理由で出遅れた場合に使われます',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -926,7 +991,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -959,7 +1024,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       ),
                                       Text(
                                         'L0の場合、事故点は加算されず、勝率や事故率の計算でも出走回数としてカウントされません。\n'
-                                            '一方、L1（選手責任の出遅れ）は事故点が加算され、級別審査にも影響します。',
+                                        '一方、L1（選手責任の出遅れ）は事故点が加算され、級別審査にも影響します。',
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         ),
@@ -985,21 +1050,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['LateStartNoResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['LateStartNoResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartNoResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartNoResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartNoResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartNoResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['LateStartNoResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartNoResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartNoResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartNoResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartNoResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1023,26 +1088,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['LateStartOnResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['LateStartOnResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartOnResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartOnResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartOnResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['LateStartOnResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['LateStartOnResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartOnResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartOnResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartOnResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['LateStartOnResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任による出遅れ回数',
@@ -1053,7 +1118,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         'Lとはスタートタイミングから1秒以上遅れてスタートラインを通過した場合に適用されます。\n'
-                                            'L0は「選手責任の出遅れ」を示します。',
+                                        'L0は「選手責任の出遅れ」を示します。',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -1064,7 +1129,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1097,7 +1162,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       ),
                                       Text(
                                         '「L1」となった場合、その選手はそのレースを欠場扱いとなり、該当艇が絡む舟券は全額返還されます。\n'
-                                            'また、選手には事故点が加算され、一定期間レースへの出場停止などの罰則が科されます。',
+                                        'また、選手には事故点が加算され、一定期間レースへの出場停止などの罰則が科されます。',
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         ),
@@ -1123,21 +1188,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['LateStartOnResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['LateStartOnResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartOnResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartOnResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartOnResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['LateStartOnResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['LateStartOnResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartOnResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartOnResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartOnResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['LateStartOnResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1161,26 +1226,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['WithdrawNoResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['WithdrawNoResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawNoResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawNoResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawNoResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawNoResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['WithdrawNoResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawNoResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawNoResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawNoResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawNoResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任外の事前欠場回数',
@@ -1201,7 +1266,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1259,21 +1324,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['WithdrawNoResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['WithdrawNoResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawNoResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawNoResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawNoResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawNoResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['WithdrawNoResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawNoResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawNoResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawNoResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawNoResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1297,26 +1362,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['WithdrawOnResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['WithdrawOnResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawOnResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawOnResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawOnResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['WithdrawOnResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['WithdrawOnResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawOnResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawOnResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawOnResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['WithdrawOnResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任による事前欠場回数',
@@ -1327,7 +1392,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         '「K」は欠場（レースに出場しないこと）を示し、\n'
-                                            '「1」は「選手責任」を表し、選手自身のミスや過失など、選手の責任によってレース前に欠場した場合に使われます。',
+                                        '「1」は「選手責任」を表し、選手自身のミスや過失など、選手の責任によってレース前に欠場した場合に使われます。',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -1338,7 +1403,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1371,7 +1436,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       ),
                                       Text(
                                         'K1が記録されると、その選手には事故点（通常10点）が加算され、事故率や級別審査にも影響します。\n'
-                                            'また、K1となった艇が絡む舟券は全額返還されます。',
+                                        'また、K1となった艇が絡む舟券は全額返還されます。',
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         ),
@@ -1397,21 +1462,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['WithdrawOnResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['WithdrawOnResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawOnResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawOnResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawOnResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['WithdrawOnResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['WithdrawOnResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawOnResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawOnResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawOnResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['WithdrawOnResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1435,26 +1500,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['InvalidNoResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任外の失格回数',
@@ -1465,7 +1530,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         '「S」は失格（Disqualification）を示し\n'
-                                            '「0」は「選手責任外」を表し、選手の責任によらない理由（例：機械的トラブル、他艇からのもらい事故、不可抗力など）で失格となった場合に使われます',
+                                        '「0」は「選手責任外」を表し、選手の責任によらない理由（例：機械的トラブル、他艇からのもらい事故、不可抗力など）で失格となった場合に使われます',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -1476,7 +1541,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1534,21 +1599,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['InvalidNoResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1572,26 +1637,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['InvalidNoResponsibility#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidNoResponsibility#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidNoResponsibility#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任による失格回数',
@@ -1602,7 +1667,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         '「S1」は選手自身の過失やミスによって失格となった場合に使われます。\n'
-                                            '具体的には、転覆、落水、沈没、周回誤認、危険行為など、選手の責任でレース続行ができなくなった場合が該当します。',
+                                        '具体的には、転覆、落水、沈没、周回誤認、危険行為など、選手の責任でレース続行ができなくなった場合が該当します。',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -1613,7 +1678,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1646,7 +1711,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       ),
                                       Text(
                                         'S1が記録されると、その選手には事故点（通常10点）が加算され、\n'
-                                            '事故率や級別審査にも影響します。また、舟券は全額返還されます。',
+                                        '事故率や級別審査にも影響します。また、舟券は全額返還されます。',
                                         style: TextStyle(
                                           color: Colors.blueGrey,
                                         ),
@@ -1672,21 +1737,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['InvalidNoResponsibility#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidNoResponsibility#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidNoResponsibility#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1710,26 +1775,26 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                     safeParse(
                                       _currentMember['InvalidOnObstruction#1'],
                                     ) +
-                                        safeParse(
-                                          _currentMember['InvalidOnObstruction#2'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidOnObstruction#3'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidOnObstruction#4'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidOnObstruction#5'],
-                                        ) +
-                                        safeParse(
-                                          _currentMember['InvalidOnObstruction#6'],
-                                        );
+                                    safeParse(
+                                      _currentMember['InvalidOnObstruction#2'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidOnObstruction#3'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidOnObstruction#4'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidOnObstruction#5'],
+                                    ) +
+                                    safeParse(
+                                      _currentMember['InvalidOnObstruction#6'],
+                                    );
 
                                 return AlertDialog(
                                   title: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '選手責任による妨害失格回数',
@@ -1740,8 +1805,8 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                       SizedBox(height: 4),
                                       Text(
                                         '他艇を妨害したことによる選手責任の失格に該当します。\n'
-                                            'S2が記録されると、その選手には事故点が15点加算されます。\n'
-                                            'S2による失格の場合、舟券の全額返還は行われません。',
+                                        'S2が記録されると、その選手には事故点が15点加算されます。\n'
+                                        'S2による失格の場合、舟券の全額返還は行われません。',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey[700],
@@ -1752,7 +1817,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '合計: ${total == 0 ? 'なし' : total.toStringAsFixed(0)}',
@@ -1810,21 +1875,21 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   safeParse(
                                     _currentMember['InvalidOnObstruction#1'],
                                   ) +
-                                      safeParse(
-                                        _currentMember['InvalidOnObstruction#2'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidOnObstruction#3'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidOnObstruction#4'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidOnObstruction#5'],
-                                      ) +
-                                      safeParse(
-                                        _currentMember['InvalidOnObstruction#6'],
-                                      );
+                                  safeParse(
+                                    _currentMember['InvalidOnObstruction#2'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidOnObstruction#3'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidOnObstruction#4'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidOnObstruction#5'],
+                                  ) +
+                                  safeParse(
+                                    _currentMember['InvalidOnObstruction#6'],
+                                  );
                               if (total == 0) {
                                 return '';
                               } else {
@@ -1882,7 +1947,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                           barRods: [
                             BarChartRodData(
                               toY:
-                              double.parse(_currentMember['WinRate12#$i']) *
+                                  double.parse(_currentMember['WinRate12#$i']) *
                                   100,
                               color: Colors.indigo.withOpacity(0.9),
                               width: 20,
@@ -1914,12 +1979,12 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                               _currentMember['NumberOfEntries#$course'] ?? '0';
                           final entries =
                               double.tryParse(entriesRaw.toString())?.toInt() ??
-                                  0;
+                              0;
 
                           return BarTooltipItem(
                             'コース: $course\n'
-                                '複勝率: $winRate%\n'
-                                '進入回数: ${entries}回',
+                            '複勝率: $winRate%\n'
+                            '進入回数: ${entries}回',
                             const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -1988,7 +2053,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                           barRods: [
                             BarChartRodData(
                               toY:
-                              double.parse(_currentMember['1stPlace#$i']) +
+                                  double.parse(_currentMember['1stPlace#$i']) +
                                   double.parse(_currentMember['2ndPlace#$i']) +
                                   double.parse(_currentMember['3rdPlace#$i']),
                               width: 20,
@@ -2049,12 +2114,12 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                               _currentMember['NumberOfEntries#$course'] ?? '0';
                           final entries =
                               double.tryParse(entriesRaw.toString())?.toInt() ??
-                                  0;
+                              0;
 
                           return BarTooltipItem(
                             'コース: $course\n'
-                                '123着: ${place123}回\n'
-                                '進入回数: ${entries}回',
+                            '123着: ${place123}回\n'
+                            '進入回数: ${entries}回',
                             const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -2114,7 +2179,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                           barRods: [
                             BarChartRodData(
                               toY:
-                              double.parse(_currentMember['StartTime#$i']) *
+                                  double.parse(_currentMember['StartTime#$i']) *
                                   -1,
                               color: Colors.transparent,
                               width: 20,
@@ -2130,7 +2195,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                                   double.parse(_currentMember['StartTime#$i']) *
                                       -1,
                                   double.parse(_currentMember['StartTime#$i']) *
-                                      -1 +
+                                          -1 +
                                       0.02,
                                   Colors.red,
                                 ),
@@ -2163,12 +2228,12 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                               _currentMember['NumberOfEntries#$course'] ?? '0';
                           final entries =
                               double.tryParse(entriesRaw.toString())?.toInt() ??
-                                  0;
+                              0;
 
                           return BarTooltipItem(
                             'コース: $course\n'
-                                'Sタイム: $startTime\n'
-                                '進入回数: ${entries}回',
+                            'Sタイム: $startTime\n'
+                            '進入回数: ${entries}回',
                             const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
