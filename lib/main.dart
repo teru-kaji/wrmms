@@ -223,8 +223,6 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
       ),
       body: Column(
         children: [
-
-
           Row(
             children: [
               Expanded(
