@@ -397,24 +397,20 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: SizedBox(
-              width: double.infinity,
+              width: 100,
+              height: 40,
               child: ElevatedButton(
                 onPressed: _searchMembers,
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.blueAccent,
                   foregroundColor: Colors.white,
+                  minimumSize: Size(60, 32),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   textStyle: TextStyle(fontSize: 14),
                 ),
-                child: Text('Search'),
+                child: Text('検索'),
               ),
             ),
           ),
