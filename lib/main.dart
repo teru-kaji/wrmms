@@ -31,24 +31,58 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Member Search App',
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: Colors.blue,
+      //     primary: Colors.blue,
+      //     brightness: Brightness.light,
+      //   ),
+      //   useMaterial3: true,
+      //   appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
+      // ),
+      // darkTheme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: Colors.blue,
+      //     primary: Colors.blue,
+      //     brightness: Brightness.dark,
+      //   ),
+      //   useMaterial3: true,
+      //   appBarTheme: AppBarTheme(backgroundColor: Colors.blue[700]),
+      // ),
+
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          primary: Colors.blue,
+          seedColor: Colors.lightBlue,
+          primary: Colors.lightBlue,
           brightness: Brightness.light,
+          background: Colors.white,
+          onBackground: Colors.black87,
         ),
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.lightBlue),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.blue[50],  // 入力欄の背景色
+        ),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          primary: Colors.blue,
+          seedColor: Colors.indigo,
+          primary: Colors.indigo,
           brightness: Brightness.dark,
+          background: Colors.grey[900],
+          onBackground: Colors.white70,
         ),
+        scaffoldBackgroundColor: Colors.grey[900],
         useMaterial3: true,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.blue[700]),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.indigo[700]),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.indigo[900],  // 入力欄の背景色
+        ),
       ),
+
       themeMode: _themeMode,
       home: MemberSearchPage(
         onToggleTheme: _toggleThemeMode,
@@ -221,6 +255,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
           ),
         ],
       ),
+
       body: Column(
         children: [
           Row(
@@ -265,10 +300,11 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   ),
                 ),
               ),
+              // SizedBox(width: 8), // ← 「期」と「級別」の間
               Expanded(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(
                       labelText: '級別',
@@ -305,10 +341,11 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   ),
                 ),
               ),
+              // SizedBox(width: 8), // ← 「級別」と「性別」の間
               Expanded(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: DropdownButtonFormField(
                     decoration: InputDecoration(
                       labelText: '性別',
@@ -371,8 +408,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
                   ),
                 ),
               ),
-
-              SizedBox(width: 16),
+              SizedBox(width: 12), // ← 「登録番号」と「氏名（ひらがな）」の間
               Expanded(
                 flex: 2,
                 child: TextField(
@@ -399,7 +435,7 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: SizedBox(
-              width: 100,
+              width: 380,
               height: 40,
               child: ElevatedButton(
                 onPressed: _searchMembers,
