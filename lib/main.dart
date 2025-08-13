@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           primary: Colors.lightBlue,
           brightness: Brightness.light,
           surface: Colors.white,
-          onsurface: Colors.black87,
+          onSurface: Colors.black87,
         ),
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
@@ -66,13 +66,14 @@ class _MyAppState extends State<MyApp> {
           fillColor: Colors.blue[50],  // 入力欄の背景色
         ),
       ),
+
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.indigo,
           primary: Colors.indigo,
           brightness: Brightness.dark,
           surface: Colors.grey[900],
-          onsurface: Colors.white70,
+          onSurface: Colors.white70,
         ),
         scaffoldBackgroundColor: Colors.grey[900],
         useMaterial3: true,
