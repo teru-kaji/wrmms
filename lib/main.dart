@@ -31,6 +31,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Member Search App',
+
       // theme: ThemeData(
       //   colorScheme: ColorScheme.fromSeed(
       //     seedColor: Colors.blue,
@@ -49,7 +50,6 @@ class _MyAppState extends State<MyApp> {
       //   useMaterial3: true,
       //   appBarTheme: AppBarTheme(backgroundColor: Colors.blue[700]),
       // ),
-
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.lightBlue,
