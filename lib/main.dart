@@ -32,24 +32,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Member Search App',
 
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(
-      //     seedColor: Colors.blue,
-      //     primary: Colors.blue,
-      //     brightness: Brightness.light,
-      //   ),
-      //   useMaterial3: true,
-      //   appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
-      // ),
-      // darkTheme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(
-      //     seedColor: Colors.blue,
-      //     primary: Colors.blue,
-      //     brightness: Brightness.dark,
-      //   ),
-      //   useMaterial3: true,
-      //   appBarTheme: AppBarTheme(backgroundColor: Colors.blue[700]),
-      // ),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.lightBlue,
@@ -69,18 +51,18 @@ class _MyAppState extends State<MyApp> {
 
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-          primary: Colors.indigo,
+          seedColor: Colors.blue,
+          primary: Colors.blue,
           brightness: Brightness.dark,
           surface: Colors.grey[900],
           onSurface: Colors.white70,
         ),
         scaffoldBackgroundColor: Colors.grey[900],
         useMaterial3: true,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.indigo[700]),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.indigo),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.indigo[900],  // 入力欄の背景色
+          fillColor: Colors.indigo,  // 入力欄の背景色
         ),
       ),
 
