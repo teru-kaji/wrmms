@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Member Search App',
 
+      // ***** Blue theme *****
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.lightBlue,
