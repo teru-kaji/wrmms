@@ -6,82 +6,162 @@ import 'package:fl_chart/fl_chart.dart';
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+Future<Map<String, ThemeData>> loadThemes() async {
+  final string = await rootBundle.loadString('assets/themes.json');
+  final map = json.decode(string) as Map<String, dynamic>;
+  return map.map((key, val) {
+    final v = val as Map<String, dynamic>;
+    return MapEntry(
+      key,
+      ThemeData(
+        colorScheme: ColorScheme(
+          brightness: v['brightness'] == "dark" ? Brightness.dark : Brightness.light,
+          primary: Color(int.parse(v['primary'].replaceFirst('#', '0xff'))),
+          onPrimary: Colors.white, // 必須指定！追加
+          surface: Color(int.parse(v['surface'].replaceFirst('#', '0xff'))),
+          onSurface: v['brightness'] == "dark" ? Colors.white70 : Colors.black87,
+          secondary: Color(int.parse(v['primary'].replaceFirst('#', '0xff'))),
+          onSecondary: v['brightness'] == "dark" ? Colors.white : Colors.black,
+          error: Colors.red,
+          onError: Colors.white,
+          background: Color(int.parse(v['background'].replaceFirst('#', '0xff'))),
+          onBackground: v['brightness'] == "dark" ? Colors.white60 : Colors.black,
+        ),
+        scaffoldBackgroundColor: Color(int.parse(v['background'].replaceFirst('#', '0xff'))),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Color(int.parse(v['inputFill'].replaceFirst('#', '0xff'))),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(int.parse(v['appBar'].replaceFirst('#', '0xff'))),
+        ),
+        useMaterial3: true,
+      ),
+    );
+  });
+}
 
-  void _toggleThemeMode() {
-    setState(() {
-      if (_themeMode == ThemeMode.light) {
-        _themeMode = ThemeMode.dark;
-      } else if (_themeMode == ThemeMode.dark) {
-        _themeMode = ThemeMode.light;
-      } else {
-        _themeMode = ThemeMode.light;
-      }
+class _MyAppState extends State<MyApp> {
+  Map<String, ThemeData> _themes = {};
+  String _selectedThemeKey = "blue";
+
+  @override
+  void initState() {
+    super.initState();
+    loadThemes().then((themes) {
+      setState(() { _themes = themes; });
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    if (_themes.isEmpty) return MaterialApp(home: Scaffold(body: CircularProgressIndicator()));
     return MaterialApp(
-      title: 'Member Search App',
-
-      // ***** Blue theme *****
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightBlue,
-          primary: Colors.lightBlue,
-          brightness: Brightness.light,
-          surface: Colors.white,
-          onSurface: Colors.black87,
-        ),
-        scaffoldBackgroundColor: Colors.white,
-        useMaterial3: true,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.lightBlue),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.blue[50],  // 入力欄の背景色
-        ),
-      ),
-
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          primary: Colors.blue,
-          brightness: Brightness.dark,
-          surface: Colors.grey[900],
-          onSurface: Colors.white70,
-        ),
-        scaffoldBackgroundColor: Colors.grey[900],
-        useMaterial3: true,
-        appBarTheme: AppBarTheme(backgroundColor: Colors.indigo),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.indigo,  // 入力欄の背景色
-        ),
-      ),
-
-      themeMode: _themeMode,
+      theme: _themes[_selectedThemeKey]!,
       home: MemberSearchPage(
-        onToggleTheme: _toggleThemeMode,
-        themeMode: _themeMode,
+        selectedTheme: _selectedThemeKey,
+        //onThemeChanged: (key) => setState(() { _selectedThemeKey = key; }),
+        onThemeChanged: (key) {
+          if (key != null) {
+            setState(() { _selectedThemeKey = key; });
+          }
+        },
+        themes: _themes,
       ),
     );
   }
 }
 
+// class MyApp extends StatefulWidget {
+//   @override
+//   State<MyApp> createState() => _MyAppState();
+// }
+//
+// class _MyAppState extends State<MyApp> {
+//   ThemeMode _themeMode = ThemeMode.system;
+//
+//   void _toggleThemeMode() {
+//     setState(() {
+//       if (_themeMode == ThemeMode.light) {
+//         _themeMode = ThemeMode.dark;
+//       } else if (_themeMode == ThemeMode.dark) {
+//         _themeMode = ThemeMode.light;
+//       } else {
+//         _themeMode = ThemeMode.light;
+//       }
+//     });
+//   }
+//
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Member Search App',
+//
+//       // ***** Blue theme *****
+//       theme: ThemeData(
+//         colorScheme: ColorScheme.fromSeed(
+//           seedColor: Colors.lightBlue,
+//           primary: Colors.lightBlue,
+//           brightness: Brightness.light,
+//           surface: Colors.white,
+//           onSurface: Colors.black87,
+//         ),
+//         scaffoldBackgroundColor: Colors.white,
+//         useMaterial3: true,
+//         appBarTheme: AppBarTheme(backgroundColor: Colors.lightBlue),
+//         inputDecorationTheme: InputDecorationTheme(
+//           filled: true,
+//           fillColor: Colors.blue[50],  // 入力欄の背景色
+//         ),
+//       ),
+//
+//       darkTheme: ThemeData(
+//         colorScheme: ColorScheme.fromSeed(
+//           seedColor: Colors.blue,
+//           primary: Colors.blue,
+//           brightness: Brightness.dark,
+//           surface: Colors.grey[900],
+//           onSurface: Colors.white70,
+//         ),
+//         scaffoldBackgroundColor: Colors.grey[900],
+//         useMaterial3: true,
+//         appBarTheme: AppBarTheme(backgroundColor: Colors.indigo),
+//         inputDecorationTheme: InputDecorationTheme(
+//           filled: true,
+//           fillColor: Colors.indigo,  // 入力欄の背景色
+//         ),
+//       ),
+//
+//       themeMode: _themeMode,
+//       home: MemberSearchPage(
+//         onToggleTheme: _toggleThemeMode,
+//         themeMode: _themeMode,
+//       ),
+//     );
+//   }
+// }
+
 class MemberSearchPage extends StatefulWidget {
+  final String selectedTheme;
+  final ValueChanged<String?> onThemeChanged; // ←修正
+  final Map<String, ThemeData> themes;
   final VoidCallback? onToggleTheme;
   final ThemeMode themeMode;
 
-  MemberSearchPage({this.onToggleTheme, this.themeMode = ThemeMode.system});
+  MemberSearchPage({
+    required this.selectedTheme,
+    required this.onThemeChanged,
+    required this.themes,
+    this.onToggleTheme,
+    this.themeMode = ThemeMode.system,
+  });
+
 
   @override
   _MemberSearchPageState createState() => _MemberSearchPageState();
@@ -221,25 +301,48 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
       _isLoadingMore = false;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('選手検索'),
         actions: [
-          IconButton(
-            icon: Icon(
-              widget.themeMode == ThemeMode.dark
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: DropdownButton<String>(
+              value: widget.selectedTheme,
+              icon: Icon(Icons.color_lens),
+              items: widget.themes.keys.map((k) => DropdownMenuItem(
+                value: k,
+                child: Text(k.toUpperCase()),
+                // style: TextStyle(color: Colors.black), // ここを明示！
+              )).toList(),
+              onChanged: widget.onThemeChanged,
+              underline: SizedBox(),
+              style: TextStyle(color: Colors.black, fontSize: 15),
             ),
-            tooltip:
-                widget.themeMode == ThemeMode.dark ? 'ライトモードに切替' : 'ダークモードに切替',
-            onPressed: widget.onToggleTheme,
           ),
         ],
       ),
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text('選手検索'),
+  //       actions: [
+  //         IconButton(
+  //           icon: Icon(
+  //             widget.themeMode == ThemeMode.dark
+  //                 ? Icons.dark_mode
+  //                 : Icons.light_mode,
+  //           ),
+  //           tooltip:
+  //               widget.themeMode == ThemeMode.dark ? 'ライトモードに切替' : 'ダークモードに切替',
+  //           onPressed: widget.onToggleTheme,
+  //         ),
+  //       ],
+  //     ),
 
       body: Column(
         children: [
