@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-
 void main() {
   runApp(MyApp());
 }
