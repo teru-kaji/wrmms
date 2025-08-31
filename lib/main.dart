@@ -278,24 +278,6 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
         ],
       ),
 
-      // @override
-      // Widget build(BuildContext context) {
-      //   return Scaffold(
-      //     appBar: AppBar(
-      //       title: Text('選手検索'),
-      //       actions: [
-      //         IconButton(
-      //           icon: Icon(
-      //             widget.themeMode == ThemeMode.dark
-      //                 ? Icons.dark_mode
-      //                 : Icons.light_mode,
-      //           ),
-      //           tooltip:
-      //               widget.themeMode == ThemeMode.dark ? 'ライトモードに切替' : 'ダークモードに切替',
-      //           onPressed: widget.onToggleTheme,
-      //         ),
-      //       ],
-      //     ),
       body: Column(
         children: [
           Row(
@@ -480,8 +462,10 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
               child: ElevatedButton(
                 onPressed: _searchMembers,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  // ここでテーマの主色！
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  // 主色に合う文字色
                   minimumSize: Size(60, 32),
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   textStyle: TextStyle(fontSize: 14),
