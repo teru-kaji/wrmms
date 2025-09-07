@@ -651,11 +651,10 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     final allData = getAllTermsForMember();
     if (allData.isEmpty) return;
 
-    // 勝率・複勝率・期・級別データ作成
+    // データ作成
     final List<FlSpot> winRateSpots = [];
     final List<FlSpot> placeRateSpots = [];
     final List<String> labels = [];
-    final List<String> ranks = [];
 
     for (int i = 0; i < allData.length; i++) {
       final item = allData[i];
@@ -664,7 +663,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
       winRateSpots.add(FlSpot(i.toDouble(), winRate));
       placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
       labels.add(formatDataTime(item['DataTime']));
-      ranks.add(item['Rank'] ?? '');
     }
 
     showDialog(
@@ -672,13 +670,13 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
       builder: (_) => AlertDialog(
         contentPadding: EdgeInsets.all(12),
         content: Container(
-          width: 430,
+          width: 440,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("全期・勝率&複勝率の折れ線グラフ"),
+              Text("全期・勝率の折れ線グラフ"),
               Container(
-                height: 220,
+                height: 160,
                 child: LineChart(
                   LineChartData(
                     lineBarsData: [
@@ -689,16 +687,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                         dotData: FlDotData(show: true),
                         barWidth: 3,
                         belowBarData: BarAreaData(show: false),
-                        // 勝率
-                      ),
-                      LineChartBarData(
-                        spots: placeRateSpots,
-                        isCurved: false,
-                        color: Colors.green,
-                        dotData: FlDotData(show: true),
-                        barWidth: 3,
-                        belowBarData: BarAreaData(show: false),
-                        // 複勝率
                       ),
                     ],
                     titlesData: FlTitlesData(
@@ -725,17 +713,62 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                       rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     ),
                     minY: 0,
-                    maxY: 100,
+                    maxY: 10, // 勝率の最大値に合わせて調整
+                  ),
+                ),
+              ),
+              SizedBox(height: 18),
+              Text("全期・複勝率の折れ線グラフ"),
+              Container(
+                height: 160,
+                child: LineChart(
+                  LineChartData(
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: placeRateSpots,
+                        isCurved: false,
+                        color: Colors.green,
+                        dotData: FlDotData(show: true),
+                        barWidth: 3,
+                        belowBarData: BarAreaData(show: false),
+                      ),
+                    ],
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            int idx = value.toInt();
+                            return idx >= 0 && idx < labels.length
+                                ? Text(labels[idx], style: TextStyle(fontSize: 11))
+                                : Text('');
+                          },
+                          reservedSize: 60,
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) => Text("${value.toInt()}%"),
+                          reservedSize: 36,
+                        ),
+                      ),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    ),
+                    minY: 0,
+                    maxY: 100, // 複勝率は％表示
                   ),
                 ),
               ),
               SizedBox(height: 13),
+              // もともとの級別ラベルなど続けてそのまま配置
               Text('級別（各期ごと）'),
               Container(
                 height: 60,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: ranks.length,
+                  itemCount: allData.length,
                   itemBuilder: (context, idx) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
@@ -744,7 +777,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                         Container(
                           margin: EdgeInsets.only(top: 2),
                           child: Text(
-                            ranks[idx],
+                            allData[idx]['Rank'] ?? '',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -769,7 +802,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
       ),
     );
   }
-
 
 
   void _switchDataTime(String newDataTime) {
