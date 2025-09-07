@@ -125,7 +125,21 @@ class _MemberSearchPageState extends State<MemberSearchPage> {
     {'label': '男性', 'value': '1'},
     {'label': '女性', 'value': '2'},
   ];
-  final List<String> _dataTimeList = ['', '20252', '20251', '20021'];
+  final List<String> _dataTimeList = [
+    '',
+    '20252',
+    '20251',
+    '20242',
+    '20241',
+    '20232',
+    '20231',
+    '20222',
+    '20221',
+    '20212',
+    '20211',
+    '20202',
+    '20021',
+  ];
   final List<String> _rankList = ['', 'A1', 'A2', 'B1', 'B2'];
   List<Map<String, dynamic>> _allMembers = [];
   List<Map<String, dynamic>> _filteredMembers = []; // ←検索後保持用
@@ -601,7 +615,21 @@ class MemberDetailPage extends StatefulWidget {
 class _MemberDetailPageState extends State<MemberDetailPage> {
   late Map<String, dynamic> _currentMember;
   late String _selectedDataTime;
-  final List<String> _dataTimeList = ['20252', '20251', '20021'];
+  final List<String> _dataTimeList = [
+    '',
+    '20252',
+    '20251',
+    '20242',
+    '20241',
+    '20232',
+    '20231',
+    '20222',
+    '20221',
+    '20212',
+    '20211',
+    '20202',
+    '20021',
+  ];
 
   @override
   void initState() {
@@ -609,6 +637,140 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     _currentMember = widget.member;
     _selectedDataTime = _currentMember['DataTime'];
   }
+
+  // --- 追加: グラフ描画用データ取得関数 ---
+  List<Map<String, dynamic>> getAllTermsForMember() {
+    final num = _currentMember['Number'];
+    return widget.allMembers
+        .where((m) => m['Number'] == num)
+        .toList()
+      ..sort((a, b) => a['DataTime'].compareTo(b['DataTime']));
+  }
+
+  void _showAllTermsGraph() {
+    final allData = getAllTermsForMember();
+    if (allData.isEmpty) return;
+
+    // 勝率・複勝率・期・級別データ作成
+    final List<FlSpot> winRateSpots = [];
+    final List<FlSpot> placeRateSpots = [];
+    final List<String> labels = [];
+    final List<String> ranks = [];
+
+    for (int i = 0; i < allData.length; i++) {
+      final item = allData[i];
+      double winRate = double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
+      double placeRate = (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
+      winRateSpots.add(FlSpot(i.toDouble(), winRate));
+      placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
+      labels.add(formatDataTime(item['DataTime']));
+      ranks.add(item['Rank'] ?? '');
+    }
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        contentPadding: EdgeInsets.all(12),
+        content: Container(
+          width: 430,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("全期・勝率&複勝率の折れ線グラフ"),
+              Container(
+                height: 220,
+                child: LineChart(
+                  LineChartData(
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: winRateSpots,
+                        isCurved: false,
+                        color: Colors.blue,
+                        dotData: FlDotData(show: true),
+                        barWidth: 3,
+                        belowBarData: BarAreaData(show: false),
+                        // 勝率
+                      ),
+                      LineChartBarData(
+                        spots: placeRateSpots,
+                        isCurved: false,
+                        color: Colors.green,
+                        dotData: FlDotData(show: true),
+                        barWidth: 3,
+                        belowBarData: BarAreaData(show: false),
+                        // 複勝率
+                      ),
+                    ],
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            int idx = value.toInt();
+                            return idx >= 0 && idx < labels.length
+                                ? Text(labels[idx], style: TextStyle(fontSize: 11))
+                                : Text('');
+                          },
+                          reservedSize: 60,
+                        ),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) => Text("${value.toString()}"),
+                          reservedSize: 36,
+                        ),
+                      ),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    ),
+                    minY: 0,
+                    maxY: 100,
+                  ),
+                ),
+              ),
+              SizedBox(height: 13),
+              Text('級別（各期ごと）'),
+              Container(
+                height: 60,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: ranks.length,
+                  itemBuilder: (context, idx) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      children: [
+                        Text(labels[idx], style: TextStyle(fontSize: 11)),
+                        Container(
+                          margin: EdgeInsets.only(top: 2),
+                          child: Text(
+                            ranks[idx],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text("閉じる"),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   void _switchDataTime(String newDataTime) {
     if (newDataTime == _selectedDataTime) return;
@@ -659,6 +821,18 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                       }
                     },
                   ),
+
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _showAllTermsGraph,
+                    icon: Icon(Icons.show_chart),
+                    label: Text("全期成績グラフ表示"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+
                 ],
               ),
               SizedBox(height: 16),
