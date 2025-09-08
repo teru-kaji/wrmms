@@ -641,11 +641,11 @@ class MemberAllTermsGraphPage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(12),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          // mainAxisSize: MainAxisSize.min,
           children: [
             Text("全期・勝率グラフ"),
             Container(
-              height: 160,
+              height: 200,
               child: LineChart(
                 LineChartData(
                   lineBarsData: [
@@ -686,10 +686,10 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 18),
+            SizedBox(height: 10),
             Text("全期・複勝率グラフ"),
             Container(
-              height: 160,
+              height: 200,
               child: LineChart(
                 LineChartData(
                   lineBarsData: [
@@ -730,10 +730,10 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 13),
+            SizedBox(height: 10),
             Text('級別・勝率・複勝率（各期ごと）'),
             Container(
-              height: 75,
+              height: 100,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: allTermsData.length,
