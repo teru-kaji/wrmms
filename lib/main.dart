@@ -612,6 +612,175 @@ class MemberDetailPage extends StatefulWidget {
   _MemberDetailPageState createState() => _MemberDetailPageState();
 }
 
+class MemberAllTermsGraphPage extends StatelessWidget {
+  final List<Map<String, dynamic>> allTermsData;
+  final String memberName;
+
+  MemberAllTermsGraphPage({
+    required this.allTermsData,
+    required this.memberName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // グラフ生成用データ作成
+    final List<FlSpot> winRateSpots = [];
+    final List<FlSpot> placeRateSpots = [];
+    final List<String> labels = [];
+    for (int i = 0; i < allTermsData.length; i++) {
+      final item = allTermsData[i];
+      double winRate = double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
+      double placeRate = (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
+      winRateSpots.add(FlSpot(i.toDouble(), winRate));
+      placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
+      labels.add(formatDataTime(item['DataTime']));
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: Text('$memberName 全期成績グラフ')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("全期・勝率グラフ"),
+            Container(
+              height: 160,
+              child: LineChart(
+                LineChartData(
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: winRateSpots,
+                      isCurved: false,
+                      color: Colors.blue,
+                      dotData: FlDotData(show: true),
+                      barWidth: 3,
+                      belowBarData: BarAreaData(show: false),
+                    ),
+                  ],
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          int idx = value.toInt();
+                          return idx >= 0 && idx < labels.length
+                              ? Text(labels[idx], style: TextStyle(fontSize: 11))
+                              : Text('');
+                        },
+                        reservedSize: 60,
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) => Text("${value.toString()}"),
+                        reservedSize: 36,
+                      ),
+                    ),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  minY: 0,
+                  maxY: 10,
+                ),
+              ),
+            ),
+            SizedBox(height: 18),
+            Text("全期・複勝率グラフ"),
+            Container(
+              height: 160,
+              child: LineChart(
+                LineChartData(
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: placeRateSpots,
+                      isCurved: false,
+                      color: Colors.green,
+                      dotData: FlDotData(show: true),
+                      barWidth: 3,
+                      belowBarData: BarAreaData(show: false),
+                    ),
+                  ],
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          int idx = value.toInt();
+                          return idx >= 0 && idx < labels.length
+                              ? Text(labels[idx], style: TextStyle(fontSize: 11))
+                              : Text('');
+                        },
+                        reservedSize: 60,
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) => Text("${value.toInt()}%"),
+                        reservedSize: 36,
+                      ),
+                    ),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  minY: 0,
+                  maxY: 100,
+                ),
+              ),
+            ),
+            SizedBox(height: 13),
+            Text('級別・勝率・複勝率（各期ごと）'),
+            Container(
+              height: 75,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: allTermsData.length,
+                itemBuilder: (context, idx) {
+                  final data = allTermsData[idx];
+                  final label = labels[idx];
+                  final rank = data['Rank'] ?? '';
+                  final winRate = (double.tryParse(data['WinPointRate']?.toString() ?? '') ?? 0.0).toStringAsFixed(2);
+                  final placeRate = ((double.tryParse(data['WinRate12']?.toString() ?? '') ?? 0.0) * 100).toStringAsFixed(1);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(label, style: TextStyle(fontSize: 11)),
+                        Container(
+                          margin: EdgeInsets.only(top: 2),
+                          child: Column(
+                            children: [
+                              Text(
+                                rank,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.deepPurple,
+                                ),
+                              ),
+                              Text('$winRate', style: TextStyle(fontSize: 12, color: Colors.blue)),
+                              Text('$placeRate%', style: TextStyle(fontSize: 12, color: Colors.green)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class _MemberDetailPageState extends State<MemberDetailPage> {
   late Map<String, dynamic> _currentMember;
   late String _selectedDataTime;
@@ -651,181 +820,16 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     final allData = getAllTermsForMember();
     if (allData.isEmpty) return;
 
-    // データ作成
-    final List<FlSpot> winRateSpots = [];
-    final List<FlSpot> placeRateSpots = [];
-    final List<String> labels = [];
-
-    for (int i = 0; i < allData.length; i++) {
-      final item = allData[i];
-      double winRate = double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
-      double placeRate = (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
-      winRateSpots.add(FlSpot(i.toDouble(), winRate));
-      placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
-      labels.add(formatDataTime(item['DataTime']));
-    }
-
-
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        contentPadding: EdgeInsets.all(12),
-        content: Container(
-          width: 440,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("全期・勝率グラフ"),
-              Container(
-                height: 160,
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: winRateSpots,
-                        isCurved: false,
-                        color: Colors.blue,
-                        dotData: FlDotData(show: true),
-                        barWidth: 3,
-                        belowBarData: BarAreaData(show: false),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            int idx = value.toInt();
-                            return idx >= 0 && idx < labels.length
-                                ? Text(labels[idx], style: TextStyle(fontSize: 11))
-                                : Text('');
-                          },
-                          reservedSize: 60,
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text("${value.toString()}"),
-                          reservedSize: 36,
-                        ),
-                      ),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    minY: 0,
-                    maxY: 10, // 勝率の最大値に合わせて調整
-                  ),
-                ),
-              ),
-              SizedBox(height: 18),
-              Text("全期・複勝率グラフ"),
-              Container(
-                height: 160,
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: placeRateSpots,
-                        isCurved: false,
-                        color: Colors.green,
-                        dotData: FlDotData(show: true),
-                        barWidth: 3,
-                        belowBarData: BarAreaData(show: false),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            int idx = value.toInt();
-                            return idx >= 0 && idx < labels.length
-                                ? Text(labels[idx], style: TextStyle(fontSize: 11))
-                                : Text('');
-                          },
-                          reservedSize: 60,
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text("${value.toInt()}%"),
-                          reservedSize: 36,
-                        ),
-                      ),
-                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    minY: 0,
-                    maxY: 100, // 複勝率は％表示
-                  ),
-                ),
-              ),
-              SizedBox(height: 13),
-              // もともとの級別ラベルなど続けてそのまま配置
-              Text('級別・勝率・複勝率（各期ごと）'),
-              Container(
-                height: 75,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: allData.length,
-                  itemBuilder: (context, idx) {
-                    final data = allData[idx];
-                    final label = labels[idx];
-                    final rank = data['Rank'] ?? '';
-                    final winRate = (double.tryParse(data['WinPointRate']?.toString() ?? '') ?? 0.0).toStringAsFixed(2);
-                    final placeRate = ((double.tryParse(data['WinRate12']?.toString() ?? '') ?? 0.0) * 100).toStringAsFixed(1);
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(label, style: TextStyle(fontSize: 11)),
-                          Container(
-                            margin: EdgeInsets.only(top: 2),
-                            child: Column(
-                              children: [
-                                Text(
-                                  rank,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: Colors.deepPurple,
-                                  ),
-                                ),
-                                Text(
-                                  '$winRate',
-                                  style: TextStyle(fontSize: 12, color: Colors.blue),
-                                ),
-                                Text(
-                                  '$placeRate%',
-                                  style: TextStyle(fontSize: 12, color: Colors.green),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MemberAllTermsGraphPage(
+          allTermsData: allData,
+          memberName: _currentMember['Name'] ?? '',
         ),
-        actions: [
-          TextButton(
-            child: Text("閉じる"),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
       ),
     );
   }
-
 
   void _switchDataTime(String newDataTime) {
     if (newDataTime == _selectedDataTime) return;
