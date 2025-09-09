@@ -629,8 +629,10 @@ class MemberAllTermsGraphPage extends StatelessWidget {
     final List<String> labels = [];
     for (int i = 0; i < allTermsData.length; i++) {
       final item = allTermsData[i];
-      double winRate = double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
-      double placeRate = (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
+      double winRate =
+          double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
+      double placeRate =
+          (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
       winRateSpots.add(FlSpot(i.toDouble(), winRate));
       placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
       labels.add(formatDataTime(item['DataTime']));
@@ -645,7 +647,7 @@ class MemberAllTermsGraphPage extends StatelessWidget {
           children: [
             Text("全期・勝率グラフ"),
             Container(
-              height: 200,
+              height: 250,
               child: LineChart(
                 LineChartData(
                   lineBarsData: [
@@ -662,24 +664,41 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
+                        reservedSize: 80,
                         getTitlesWidget: (value, meta) {
                           int idx = value.toInt();
-                          return idx >= 0 && idx < labels.length
-                              ? Text(labels[idx], style: TextStyle(fontSize: 11))
-                              : Text('');
+                          String label =
+                              (idx >= 0 && idx < labels.length)
+                                  ? labels[idx]
+                                  : '';
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 70.0),
+                            // ← この数値を調整して右方向へ
+                            child: Transform.rotate(
+                              angle: -1.5708, // -90度回転（ラジアン単位、-π/2）
+                              child: Text(
+                                label,
+                                style: TextStyle(fontSize: 11),
+                              ),
+                            ),
+                          );
                         },
-                        reservedSize: 60,
                       ),
                     ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => Text("${value.toString()}"),
+                        getTitlesWidget:
+                            (value, meta) => Text("${value.toString()}"),
                         reservedSize: 36,
                       ),
                     ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                   minY: 0,
                   maxY: 10,
@@ -709,7 +728,10 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           int idx = value.toInt();
                           return idx >= 0 && idx < labels.length
-                              ? Text(labels[idx], style: TextStyle(fontSize: 11))
+                              ? Text(
+                                labels[idx],
+                                style: TextStyle(fontSize: 11),
+                              )
                               : Text('');
                         },
                         reservedSize: 60,
@@ -718,12 +740,17 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, meta) => Text("${value.toInt()}%"),
+                        getTitlesWidget:
+                            (value, meta) => Text("${value.toInt()}%"),
                         reservedSize: 36,
                       ),
                     ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                   minY: 0,
                   maxY: 100,
@@ -741,8 +768,17 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                   final data = allTermsData[idx];
                   final label = labels[idx];
                   final rank = data['Rank'] ?? '';
-                  final winRate = (double.tryParse(data['WinPointRate']?.toString() ?? '') ?? 0.0).toStringAsFixed(2);
-                  final placeRate = ((double.tryParse(data['WinRate12']?.toString() ?? '') ?? 0.0) * 100).toStringAsFixed(1);
+                  final winRate = (double.tryParse(
+                            data['WinPointRate']?.toString() ?? '',
+                          ) ??
+                          0.0)
+                      .toStringAsFixed(2);
+                  final placeRate = ((double.tryParse(
+                                data['WinRate12']?.toString() ?? '',
+                              ) ??
+                              0.0) *
+                          100)
+                      .toStringAsFixed(1);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -762,8 +798,20 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                                   color: Colors.deepPurple,
                                 ),
                               ),
-                              Text('$winRate', style: TextStyle(fontSize: 12, color: Colors.blue)),
-                              Text('$placeRate%', style: TextStyle(fontSize: 12, color: Colors.green)),
+                              Text(
+                                '$winRate',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              Text(
+                                '$placeRate%',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.green,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -779,7 +827,6 @@ class MemberAllTermsGraphPage extends StatelessWidget {
     );
   }
 }
-
 
 class _MemberDetailPageState extends State<MemberDetailPage> {
   late Map<String, dynamic> _currentMember;
@@ -810,9 +857,7 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
   // --- 追加: グラフ描画用データ取得関数 ---
   List<Map<String, dynamic>> getAllTermsForMember() {
     final num = _currentMember['Number'];
-    return widget.allMembers
-        .where((m) => m['Number'] == num)
-        .toList()
+    return widget.allMembers.where((m) => m['Number'] == num).toList()
       ..sort((a, b) => a['DataTime'].compareTo(b['DataTime']));
   }
 
@@ -823,10 +868,11 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MemberAllTermsGraphPage(
-          allTermsData: allData,
-          memberName: _currentMember['Name'] ?? '',
-        ),
+        builder:
+            (_) => MemberAllTermsGraphPage(
+              allTermsData: allData,
+              memberName: _currentMember['Name'] ?? '',
+            ),
       ),
     );
   }
@@ -889,7 +935,6 @@ class _MemberDetailPageState extends State<MemberDetailPage> {
                       foregroundColor: Colors.white,
                     ),
                   ),
-
                 ],
               ),
               SizedBox(height: 16),
