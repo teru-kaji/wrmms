@@ -635,7 +635,7 @@ class MemberAllTermsGraphPage extends StatelessWidget {
           (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
       winRateSpots.add(FlSpot(i.toDouble(), winRate));
       placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
-      labels.add(formatDataTime(item['DataTime']));
+      labels.add(formatShortDataTime(item['DataTime'])); // ←ここを短縮用
     }
 
     return Scaffold(
@@ -650,6 +650,7 @@ class MemberAllTermsGraphPage extends StatelessWidget {
               height: 250,
               child: LineChart(
                 LineChartData(
+
                   lineBarsData: [
                     LineChartBarData(
                       spots: winRateSpots,
@@ -2628,4 +2629,22 @@ String formatDataTime(String dataTime) {
       return '不明な期';
   }
   return '$year年$termLabel';
+}
+// 短縮系
+String formatShortDataTime(String dataTime) {
+  if (dataTime == null || dataTime.length != 5) return '';
+  final year = dataTime.substring(2,4);
+  final term = dataTime.substring(4);
+  String termLabel;
+  switch (term) {
+    case '1':
+      termLabel = '前';
+      break;
+    case '2':
+      termLabel = '後';
+      break;
+    default:
+      termLabel = '';
+  }
+  return '$year$termLabel';
 }
