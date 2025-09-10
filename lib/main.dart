@@ -713,21 +713,20 @@ class MemberAllTermsGraphPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
+// --- 複勝率グラフ部分 ---
             Text("全期・複勝率グラフ"),
-            // 複勝率グラフも同様にSingleChildScrollViewでラップ
-            // ★ 横スクロール可能に
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
                 width: chartWidth,
-                height: 250,
+                height: 200,
                 child: LineChart(
                   LineChartData(
                     lineBarsData: [
                       LineChartBarData(
-                        spots: winRateSpots,
+                        spots: placeRateSpots,
                         isCurved: false,
-                        color: Colors.blue,
+                        color: Colors.green,
                         dotData: FlDotData(show: true),
                         barWidth: 3,
                         belowBarData: BarAreaData(show: false),
@@ -740,41 +739,106 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                           getTitlesWidget: (value, meta) {
                             int idx = value.toInt();
                             return idx >= 0 && idx < labels.length
-                                ? Text(
-                                labels[idx], style: TextStyle(fontSize: 11))
+                                ? Text(labels[idx], style: TextStyle(fontSize: 11))
                                 : Text('');
                           },
                           reservedSize: 60,
-                          interval: 1, // 1区間ごと表示
+                          interval: 1,
                         ),
                       ),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          getTitlesWidget: (value, meta) =>
-                              Text("${value.toString()}"),
+                          getTitlesWidget: (value, meta) => Text("${value.toInt()}%"),
                           reservedSize: 36,
                         ),
                       ),
-                      topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     ),
                     minY: 0,
-                    maxY: 10,
+                    maxY: 100,
                     minX: 0,
                     maxX: (itemCount - 1).toDouble(),
-                    // x軸の分割間隔の調整不要、ラベルの間隔でパディング調整
                     gridData: FlGridData(
                       show: true,
-                      horizontalInterval: 1,
+                      horizontalInterval: 10,
                       verticalInterval: 1,
                     ),
                   ),
                 ),
               ),
             ),
+//             Text("全期・複勝率グラフ"),
+//             // 複勝率グラフも同様にSingleChildScrollViewでラップ
+//             // ★ 横スクロール可能に
+//             SingleChildScrollView(
+//               scrollDirection: Axis.horizontal,
+//               child: Container(
+//                 width: chartWidth,
+//                 height: 250,
+//                 child: LineChart(
+//                   LineChartData(
+//                     lineBarsData: [
+//                       LineChartBarData(
+//                         spots: winRateSpots,
+//                         isCurved: false,
+//                         color: Colors.blue,
+//                         dotData: FlDotData(show: true),
+//                         barWidth: 3,
+//                         belowBarData: BarAreaData(show: false),
+//                       ),
+//                     ],
+//                     titlesData: FlTitlesData(
+//                       bottomTitles: AxisTitles(
+//                         sideTitles: SideTitles(
+//                           showTitles: true,
+//                           getTitlesWidget: (value, meta) {
+//                             int idx = value.toInt();
+//                             return idx >= 0 && idx < labels.length
+//                                 ? Text(
+//                                 labels[idx], style: TextStyle(fontSize: 11))
+//                                 : Text('');
+//                           },
+//                           reservedSize: 60,
+//                           interval: 1, // 1区間ごと表示
+//                         ),
+//                       ),
+//                       leftTitles: AxisTitles(
+//                         sideTitles: SideTitles(
+//                           showTitles: true,
+//                           getTitlesWidget:
+//                               (value, meta) => Text("${value.toInt()}%"),
+//                           reservedSize: 36,
+//                         ),
+//                       ),
+// //                      leftTitles: AxisTitles(
+// //                         sideTitles: SideTitles(
+// //                           showTitles: true,
+// //                           getTitlesWidget: (value, meta) =>
+// //                               Text("${value.toString()}"),
+// //                           reservedSize: 36,
+// //                         ),
+// //                       ),
+//                       topTitles: AxisTitles(
+//                           sideTitles: SideTitles(showTitles: false)),
+//                       rightTitles: AxisTitles(
+//                           sideTitles: SideTitles(showTitles: false)),
+//                     ),
+//                     minY: 0,
+//                     maxY: 10,
+//                     minX: 0,
+//                     maxX: (itemCount - 1).toDouble(),
+//                     // x軸の分割間隔の調整不要、ラベルの間隔でパディング調整
+//                     gridData: FlGridData(
+//                       show: true,
+//                       horizontalInterval: 1,
+//                       verticalInterval: 1,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ),
             SizedBox(height: 10),
             Text('級別・勝率・複勝率（各期ごと）'),
             Container(
