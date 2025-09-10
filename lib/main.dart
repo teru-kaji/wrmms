@@ -621,8 +621,10 @@ class MemberAllTermsGraphPage extends StatelessWidget {
     required this.memberName,
   });
 
+  ///--------------------------------------------------------
   @override
   Widget build(BuildContext context) {
+    // ...データ生成部分は既存通り...
     // グラフ生成用データ作成
     final List<FlSpot> winRateSpots = [];
     final List<FlSpot> placeRateSpots = [];
@@ -638,138 +640,138 @@ class MemberAllTermsGraphPage extends StatelessWidget {
       labels.add(formatShortDataTime(item['DataTime'])); // ←ここを短縮用
     }
 
+    // ラベル数に応じた横幅を設定
+    final int itemCount = labels.length;
+    final double xInterval = 40.0; // 1ラベルごとの間隔ピクセル数
+    final double chartWidth = itemCount * xInterval + 80; // 余白込み
+
     return Scaffold(
       appBar: AppBar(title: Text('$memberName 全期成績グラフ')),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(12),
         child: Column(
-          // mainAxisSize: MainAxisSize.min,
           children: [
             Text("全期・勝率グラフ"),
-            Container(
-              height: 250,
-              child: LineChart(
-                LineChartData(
-
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: winRateSpots,
-                      isCurved: false,
-                      color: Colors.blue,
-                      dotData: FlDotData(show: true),
-                      barWidth: 3,
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                  ],
-                  titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          int idx = value.toInt();
-                          return idx >= 0 && idx < labels.length
-                              ? Text(
-                            labels[idx],
-                            style: TextStyle(fontSize: 11),
-                          )
-                              : Text('');
-                        },
-                        reservedSize: 60,
+            // ★ 横スクロール可能に
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                width: chartWidth,
+                height: 250,
+                child: LineChart(
+                  LineChartData(
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: winRateSpots,
+                        isCurved: false,
+                        color: Colors.blue,
+                        dotData: FlDotData(show: true),
+                        barWidth: 3,
+                        belowBarData: BarAreaData(show: false),
                       ),
-                    ),
-                    // bottomTitles: AxisTitles(
-                    //   sideTitles: SideTitles(
-                    //     showTitles: true,
-                    //     reservedSize: 80,
-                    //     getTitlesWidget: (value, meta) {
-                    //       int idx = value.toInt();
-                    //       String label =
-                    //           (idx >= 0 && idx < labels.length)
-                    //               ? labels[idx]
-                    //               : '';
-                    //       return Padding(
-                    //         padding: const EdgeInsets.only(left: 70.0),
-                    //         // ← この数値を調整して右方向へ
-                    //         child: Transform.rotate(
-                    //           angle: -1.5708, // -90度回転（ラジアン単位、-π/2）
-                    //           child: Text(
-                    //             label,
-                    //             style: TextStyle(fontSize: 11),
-                    //           ),
-                    //         ),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget:
-                            (value, meta) => Text("${value.toString()}"),
-                        reservedSize: 36,
+                    ],
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            int idx = value.toInt();
+                            return idx >= 0 && idx < labels.length
+                                ? Text(
+                                labels[idx], style: TextStyle(fontSize: 11))
+                                : Text('');
+                          },
+                          reservedSize: 60,
+                          interval: 1, // 1区間ごと表示
+                        ),
                       ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) =>
+                              Text("${value.toString()}"),
+                          reservedSize: 36,
+                        ),
+                      ),
+                      topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
                     ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    minY: 0,
+                    maxY: 10,
+                    minX: 0,
+                    maxX: (itemCount - 1).toDouble(),
+                    // x軸の分割間隔の調整不要、ラベルの間隔でパディング調整
+                    gridData: FlGridData(
+                      show: true,
+                      horizontalInterval: 1,
+                      verticalInterval: 1,
                     ),
                   ),
-                  minY: 0,
-                  maxY: 10,
                 ),
               ),
             ),
             SizedBox(height: 10),
             Text("全期・複勝率グラフ"),
-            Container(
-              height: 200,
-              child: LineChart(
-                LineChartData(
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: placeRateSpots,
-                      isCurved: false,
-                      color: Colors.green,
-                      dotData: FlDotData(show: true),
-                      barWidth: 3,
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                  ],
-                  titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          int idx = value.toInt();
-                          return idx >= 0 && idx < labels.length
-                              ? Text(
-                                labels[idx],
-                                style: TextStyle(fontSize: 11),
-                              )
-                              : Text('');
-                        },
-                        reservedSize: 60,
+            // 複勝率グラフも同様にSingleChildScrollViewでラップ
+            // ★ 横スクロール可能に
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                width: chartWidth,
+                height: 250,
+                child: LineChart(
+                  LineChartData(
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: winRateSpots,
+                        isCurved: false,
+                        color: Colors.blue,
+                        dotData: FlDotData(show: true),
+                        barWidth: 3,
+                        belowBarData: BarAreaData(show: false),
                       ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget:
-                            (value, meta) => Text("${value.toInt()}%"),
-                        reservedSize: 36,
+                    ],
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            int idx = value.toInt();
+                            return idx >= 0 && idx < labels.length
+                                ? Text(
+                                labels[idx], style: TextStyle(fontSize: 11))
+                                : Text('');
+                          },
+                          reservedSize: 60,
+                          interval: 1, // 1区間ごと表示
+                        ),
                       ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) =>
+                              Text("${value.toString()}"),
+                          reservedSize: 36,
+                        ),
+                      ),
+                      topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
                     ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    minY: 0,
+                    maxY: 10,
+                    minX: 0,
+                    maxX: (itemCount - 1).toDouble(),
+                    // x軸の分割間隔の調整不要、ラベルの間隔でパディング調整
+                    gridData: FlGridData(
+                      show: true,
+                      horizontalInterval: 1,
+                      verticalInterval: 1,
                     ),
                   ),
-                  minY: 0,
-                  maxY: 100,
                 ),
               ),
             ),
@@ -843,6 +845,232 @@ class MemberAllTermsGraphPage extends StatelessWidget {
     );
   }
 }
+
+
+  ///--------------------------------------------------------
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // グラフ生成用データ作成
+//     final List<FlSpot> winRateSpots = [];
+//     final List<FlSpot> placeRateSpots = [];
+//     final List<String> labels = [];
+//     for (int i = 0; i < allTermsData.length; i++) {
+//       final item = allTermsData[i];
+//       double winRate =
+//           double.tryParse(item['WinPointRate']?.toString() ?? '') ?? 0;
+//       double placeRate =
+//           (double.tryParse(item['WinRate12']?.toString() ?? '') ?? 0) * 100;
+//       winRateSpots.add(FlSpot(i.toDouble(), winRate));
+//       placeRateSpots.add(FlSpot(i.toDouble(), placeRate));
+//       labels.add(formatShortDataTime(item['DataTime'])); // ←ここを短縮用
+//     }
+//
+//     return Scaffold(
+//       appBar: AppBar(title: Text('$memberName 全期成績グラフ')),
+//       body: SingleChildScrollView(
+//         padding: EdgeInsets.all(12),
+//         child: Column(
+//           // mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Text("全期・勝率グラフ"),
+//             Container(
+//               height: 250,
+//               child: LineChart(
+//                 LineChartData(
+//
+//                   lineBarsData: [
+//                     LineChartBarData(
+//                       spots: winRateSpots,
+//                       isCurved: false,
+//                       color: Colors.blue,
+//                       dotData: FlDotData(show: true),
+//                       barWidth: 3,
+//                       belowBarData: BarAreaData(show: false),
+//                     ),
+//                   ],
+//                   titlesData: FlTitlesData(
+//                     bottomTitles: AxisTitles(
+//                       sideTitles: SideTitles(
+//                         showTitles: true,
+//                         getTitlesWidget: (value, meta) {
+//                           int idx = value.toInt();
+//                           return idx >= 0 && idx < labels.length
+//                               ? Text(
+//                             labels[idx],
+//                             style: TextStyle(fontSize: 11),
+//                           )
+//                               : Text('');
+//                         },
+//                         reservedSize: 60,
+//                       ),
+//                     ),
+//                     // bottomTitles: AxisTitles(
+//                     //   sideTitles: SideTitles(
+//                     //     showTitles: true,
+//                     //     reservedSize: 80,
+//                     //     getTitlesWidget: (value, meta) {
+//                     //       int idx = value.toInt();
+//                     //       String label =
+//                     //           (idx >= 0 && idx < labels.length)
+//                     //               ? labels[idx]
+//                     //               : '';
+//                     //       return Padding(
+//                     //         padding: const EdgeInsets.only(left: 70.0),
+//                     //         // ← この数値を調整して右方向へ
+//                     //         child: Transform.rotate(
+//                     //           angle: -1.5708, // -90度回転（ラジアン単位、-π/2）
+//                     //           child: Text(
+//                     //             label,
+//                     //             style: TextStyle(fontSize: 11),
+//                     //           ),
+//                     //         ),
+//                     //       );
+//                     //     },
+//                     //   ),
+//                     // ),
+//                     leftTitles: AxisTitles(
+//                       sideTitles: SideTitles(
+//                         showTitles: true,
+//                         getTitlesWidget:
+//                             (value, meta) => Text("${value.toString()}"),
+//                         reservedSize: 36,
+//                       ),
+//                     ),
+//                     topTitles: AxisTitles(
+//                       sideTitles: SideTitles(showTitles: false),
+//                     ),
+//                     rightTitles: AxisTitles(
+//                       sideTitles: SideTitles(showTitles: false),
+//                     ),
+//                   ),
+//                   minY: 0,
+//                   maxY: 10,
+//                 ),
+//               ),
+//             ),
+//             SizedBox(height: 10),
+//             Text("全期・複勝率グラフ"),
+//             Container(
+//               height: 200,
+//               child: LineChart(
+//                 LineChartData(
+//                   lineBarsData: [
+//                     LineChartBarData(
+//                       spots: placeRateSpots,
+//                       isCurved: false,
+//                       color: Colors.green,
+//                       dotData: FlDotData(show: true),
+//                       barWidth: 3,
+//                       belowBarData: BarAreaData(show: false),
+//                     ),
+//                   ],
+//                   titlesData: FlTitlesData(
+//                     bottomTitles: AxisTitles(
+//                       sideTitles: SideTitles(
+//                         showTitles: true,
+//                         getTitlesWidget: (value, meta) {
+//                           int idx = value.toInt();
+//                           return idx >= 0 && idx < labels.length
+//                               ? Text(
+//                                 labels[idx],
+//                                 style: TextStyle(fontSize: 11),
+//                               )
+//                               : Text('');
+//                         },
+//                         reservedSize: 60,
+//                       ),
+//                     ),
+//                     leftTitles: AxisTitles(
+//                       sideTitles: SideTitles(
+//                         showTitles: true,
+//                         getTitlesWidget:
+//                             (value, meta) => Text("${value.toInt()}%"),
+//                         reservedSize: 36,
+//                       ),
+//                     ),
+//                     topTitles: AxisTitles(
+//                       sideTitles: SideTitles(showTitles: false),
+//                     ),
+//                     rightTitles: AxisTitles(
+//                       sideTitles: SideTitles(showTitles: false),
+//                     ),
+//                   ),
+//                   minY: 0,
+//                   maxY: 100,
+//                 ),
+//               ),
+//             ),
+//             SizedBox(height: 10),
+//             Text('級別・勝率・複勝率（各期ごと）'),
+//             Container(
+//               height: 100,
+//               child: ListView.builder(
+//                 scrollDirection: Axis.horizontal,
+//                 itemCount: allTermsData.length,
+//                 itemBuilder: (context, idx) {
+//                   final data = allTermsData[idx];
+//                   final label = labels[idx];
+//                   final rank = data['Rank'] ?? '';
+//                   final winRate = (double.tryParse(
+//                             data['WinPointRate']?.toString() ?? '',
+//                           ) ??
+//                           0.0)
+//                       .toStringAsFixed(2);
+//                   final placeRate = ((double.tryParse(
+//                                 data['WinRate12']?.toString() ?? '',
+//                               ) ??
+//                               0.0) *
+//                           100)
+//                       .toStringAsFixed(1);
+//
+//                   return Padding(
+//                     padding: const EdgeInsets.symmetric(horizontal: 8),
+//                     child: Column(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       children: [
+//                         Text(label, style: TextStyle(fontSize: 11)),
+//                         Container(
+//                           margin: EdgeInsets.only(top: 2),
+//                           child: Column(
+//                             children: [
+//                               Text(
+//                                 rank,
+//                                 style: TextStyle(
+//                                   fontWeight: FontWeight.bold,
+//                                   fontSize: 16,
+//                                   color: Colors.deepPurple,
+//                                 ),
+//                               ),
+//                               Text(
+//                                 '$winRate',
+//                                 style: TextStyle(
+//                                   fontSize: 12,
+//                                   color: Colors.blue,
+//                                 ),
+//                               ),
+//                               Text(
+//                                 '$placeRate%',
+//                                 style: TextStyle(
+//                                   fontSize: 12,
+//                                   color: Colors.green,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   );
+//                 },
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class _MemberDetailPageState extends State<MemberDetailPage> {
   late Map<String, dynamic> _currentMember;
