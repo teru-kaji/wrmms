@@ -665,27 +665,42 @@ class MemberAllTermsGraphPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 80,
                         getTitlesWidget: (value, meta) {
                           int idx = value.toInt();
-                          String label =
-                              (idx >= 0 && idx < labels.length)
-                                  ? labels[idx]
-                                  : '';
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 70.0),
-                            // ← この数値を調整して右方向へ
-                            child: Transform.rotate(
-                              angle: -1.5708, // -90度回転（ラジアン単位、-π/2）
-                              child: Text(
-                                label,
-                                style: TextStyle(fontSize: 11),
-                              ),
-                            ),
-                          );
+                          return idx >= 0 && idx < labels.length
+                              ? Text(
+                            labels[idx],
+                            style: TextStyle(fontSize: 11),
+                          )
+                              : Text('');
                         },
+                        reservedSize: 60,
                       ),
                     ),
+                    // bottomTitles: AxisTitles(
+                    //   sideTitles: SideTitles(
+                    //     showTitles: true,
+                    //     reservedSize: 80,
+                    //     getTitlesWidget: (value, meta) {
+                    //       int idx = value.toInt();
+                    //       String label =
+                    //           (idx >= 0 && idx < labels.length)
+                    //               ? labels[idx]
+                    //               : '';
+                    //       return Padding(
+                    //         padding: const EdgeInsets.only(left: 70.0),
+                    //         // ← この数値を調整して右方向へ
+                    //         child: Transform.rotate(
+                    //           angle: -1.5708, // -90度回転（ラジアン単位、-π/2）
+                    //           child: Text(
+                    //             label,
+                    //             style: TextStyle(fontSize: 11),
+                    //           ),
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
