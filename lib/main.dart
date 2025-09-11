@@ -642,7 +642,7 @@ class MemberAllTermsGraphPage extends StatelessWidget {
 
     // ラベル数に応じた横幅を設定
     final int itemCount = labels.length;
-    final double xInterval = 40.0; // 1ラベルごとの間隔ピクセル数
+    final double xInterval = 30.0; // 1ラベルごとの間隔ピクセル数
     final double chartWidth = itemCount * xInterval + 80; // 余白込み
 
     return Scaffold(
@@ -713,13 +713,13 @@ class MemberAllTermsGraphPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-// --- 複勝率グラフ部分 ---
+            // --- 複勝率グラフ部分 ---
             Text("全期・複勝率グラフ"),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
                 width: chartWidth,
-                height: 200,
+                height: 250,
                 child: LineChart(
                   LineChartData(
                     lineBarsData: [
